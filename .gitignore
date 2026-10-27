@@ -1,0 +1,19 @@
+# Secrets: never commit
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Environments / IDE / OS
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.idea/
+.DS_Store
+*.log
+
+# UCL course handouts (copyright UCL)
+ECON0004/**/*.pdf

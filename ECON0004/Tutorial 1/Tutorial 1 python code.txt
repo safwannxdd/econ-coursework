@@ -1,0 +1,102 @@
+# Note: in Python the # symbol is used to start a comment. Anything written after # on the same line is ignored by the Python interpreter.
+
+# load the built-in os module, which gives you tools to manage files, paths, and system-level operations directly from Python.
+import os
+
+# Check current working directory
+print("Current directory:", os.getcwd())
+
+# Change to a new directory- you can set your own main directory and save the dataset there
+os.chdir("N:/")  
+
+# Verify the change
+print("New directory:", os.getcwd())
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import sys
+
+
+# (a) Open a log file 
+sys.stdout = open("tutorial1.log", "w")
+print("(a)===log file started===")
+
+# (b)
+# load the Excel dataset 
+df = pd.read_excel("income.xlsx")
+
+# 1) browse the dataset
+print("\n(b1)===data browse===\n",df.to_string())
+
+# 2) Summary statistics only for numeric columns: mean, standard deviation, min, max
+# select numeric variables only
+num = df.select_dtypes(include="number")
+# summary statistics (Obs, Mean, Std. Dev., Min, Max)
+summary = num.agg(["count","mean","std","min","max"]).T.rename(columns={
+    "count": "Obs",
+    "mean": "Mean",
+    "std": "Std. Dev.",
+    "min": "Min",
+    "max": "Max"
+})
+
+
+# (c)
+# 1) income histogram 
+plt.hist(df["inc"], bins=20, edgecolor="black")
+plt.title("Histogram of income")
+plt.xlabel("Income")
+plt.ylabel ("Frequency")
+#save as .png
+plt.savefig("hist_income.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+# 2) create a new variable log income and plot its histogram 
+df["log_inc"] = np.log(df["inc"])
+plt.hist(df["log_inc"], bins=20, edgecolor="black")
+plt.title("Histogram of log(income)")
+plt.xlabel("log(Income)")
+plt.ylabel ("Frequency")
+#save as .png
+plt.savefig("hist_logincome.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+# 3) separate histograms of log(income) by ethnic origin 
+# histogram for nonwhites (eth == 0)
+plt.hist(df["log_inc"][df["eth"] == 0], bins=20, edgecolor="black")
+plt.title("Histogram of log(income) for nonwhites")
+plt.xlabel("log(income)")
+plt.ylabel ("Frequency")
+plt.savefig("hist_nonwhite.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+# histogram for whites (eth == 1)
+plt.hist(df["log_inc"][df["eth"] == 1], bins=20, edgecolor="black")
+plt.title("Histogram of log(income) for whites")
+plt.xlabel("log(income)")
+plt.ylabel ("Frequency")
+plt.savefig("hist_white.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+
+# (d)
+# 1) Scatterplot: income vs education
+plt.scatter(df["edu"], df["inc"], alpha=0.6, edgecolor="k")
+plt.title("Scatterplot of Income vs Education")
+plt.xlabel("Age at which left full time education")
+plt.ylabel("Household income per year (£)")
+plt.savefig("scatter_income_edu.png", dpi=300, bbox_inches="tight")
+plt.show()
+
+# 2) Show correlation matrix
+corr = df[["inc", "edu"]].corr()
+print("\n(e1)===The correlation between inc and edu is displayed in matrix===\n",corr)
+
+# 3) Show variance-covariance matrix
+cov = df[["inc", "edu"]].cov()
+print("\n(e2)===The variance-covariance between inc and edu is displayed in matrix===\n",cov)
+
+
+# === Close the log file ===
+sys.stdout.close()
